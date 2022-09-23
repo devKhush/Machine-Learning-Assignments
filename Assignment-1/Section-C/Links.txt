@@ -1,0 +1,7 @@
+https://www.geeksforgeeks.org/reduce-data-dimentionality-using-pca-python/
+
+AUC-ROC
+https://medium.com/swlh/how-to-create-an-auc-roc-plot-for-a-multiclass-model-9e13838dd3de#:~:text=How%20do%20AUC%20ROC%20plots,calculated%20for%20each%20class%20individually.
+https://stackoverflow.com/questions/45332410/roc-for-multiclass-classification
+https://www.geeksforgeeks.org/auc-roc-curve/
+https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
