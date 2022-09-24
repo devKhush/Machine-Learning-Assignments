@@ -5,3 +5,5 @@ https://medium.com/swlh/how-to-create-an-auc-roc-plot-for-a-multiclass-model-9e1
 https://stackoverflow.com/questions/45332410/roc-for-multiclass-classification
 https://www.geeksforgeeks.org/auc-roc-curve/
 https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+https://www.analyticsvidhya.com/blog/2020/06/auc-roc-curve-machine-learning/
+https://www.statology.org/plot-roc-curve-python/
