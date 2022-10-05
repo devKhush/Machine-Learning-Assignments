@@ -36,18 +36,28 @@ class CircleDataset:
             self.data[i] = np.array([x, y, h, k, self.r, label])
 
 
-def split_data_into_train_test(df: pd.DataFrame, with_bias=True, partition_size=[80, 20]):
+def split_circle_data_into_train_test(df: pd.DataFrame, partition_size, with_bias=True):
     # x = df[df.columns[:-1]]
     x = df[['x', 'y']].copy(deep=True)
     y = df['label']
 
     if with_bias:
-        x['constant'] = np.ones(x.shape[0])
+        x['bias_column'] = np.ones(x.shape[0])
 
     test_size = round((partition_size[1]/100) * x.shape[0])
     x_train, y_train = x.iloc[test_size:], y.iloc[test_size:]
     x_test, y_test = x.iloc[:test_size], y.iloc[:test_size]
     return x_train, y_train, x_test, y_test
+
+
+def split_bit_dataset(df: pd.DataFrame, with_bias=True):
+    x = df[df.columns[:-1]]
+    y = df[df.columns[-1]]
+
+    if with_bias:
+        x['bias_column'] = np.ones(x.shape[0])
+
+    return x, y
 
 
 class Perceptron:
@@ -58,9 +68,9 @@ class Perceptron:
         y_train = y_train.replace(to_replace=0, value=-1)
         self.weights = np.ones(x_train.shape[1])
 
-        i = 0
-        while i < 100:
-            i += 1
+        epoch = 0
+        while epoch < 10:
+            epoch += 1
         # while True:
             prev_weights = self.weights.copy()
 
