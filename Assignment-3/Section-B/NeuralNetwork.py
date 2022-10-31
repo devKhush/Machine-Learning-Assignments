@@ -53,7 +53,7 @@ class NeuralNetwork:
 
         # Forward Progagation on Output layer using the Softmax Activation Function
         L = self.L
-        self.z_values[L - 1][1:] = np.dot(
+        self.z_values[L-1][1:] = np.dot(
             self.weights_Θ[L-2], self.a_values[L-2])
         self.a_values[L-1][1:] = SoftMax().function(self.z_values[L-1][1:])
         return self.a_values[L-1][1:].copy()
@@ -82,21 +82,39 @@ class NeuralNetwork:
         return
 
     def fit(self, x_train: pd.DataFrame, y_train: pd.Series):
+        '''
+        Fit the Model Parameters into the Neural Network
+        '''
+        # for epoch in range(self.epochs):
+        #     print(epoch, end=' ')
+        #     Δ_weights = getNeuralNetworkWeights(
+        #         self.L, self.neuronInEachLayers, 'zero')
+
+        #     for i in range(x_train.shape[0]):
+        #         self.forwardPropagation(x_train.iloc[i])
+        #         self.backwardPropagation(y_train[i])
+
+        #         for l in range(self.L-2, -1, -1):
+        #             Δ_weights[l] = Δ_weights[l] + \
+        #                 np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
+
+        #     Δ_weights = Δ_weights / x_train.shape[0]
+        #     self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
+
         for epoch in range(self.epochs):
             print(epoch, end=' ')
-            Δ_weights = getNeuralNetworkWeights(
-                self.L, self.neuronInEachLayers, 'zero')
 
             for i in range(x_train.shape[0]):
                 self.forwardPropagation(x_train.iloc[i])
                 self.backwardPropagation(y_train[i])
 
+                Δ_weights = getNeuralNetworkWeights(
+                    self.L, self.neuronInEachLayers, 'zero')
                 for l in range(self.L-2, -1, -1):
                     Δ_weights[l] = Δ_weights[l] + \
                         np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
 
-            Δ_weights = Δ_weights / x_train.shape[0]
-            self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
+                self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
         return
 
     def predict(self, x_test: pd.DataFrame) -> np.ndarray:
