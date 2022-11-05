@@ -21,7 +21,7 @@ class NeuralNetwork:
         >>> epochs = Epochs to be used in Gradient Descent
         >>> batchSize = ???
         '''
-        self.L = N
+        self.L = N + 2
         self.neuronInEachLayers = neuronInEachLayers
         self.lr = lr
         self.epochs = epochs
@@ -32,10 +32,10 @@ class NeuralNetwork:
             activation)
         # Model weights
         self.weights_Θ: np.ndarray = getNeuralNetworkWeights(
-            N, neuronInEachLayers, weightInitType)
+            self.L, neuronInEachLayers, weightInitType)
         # Values of Activation (a = g(z)), Weighted Sum (z), Delta/Error terms (δ)
         self.a_values, self.z_values, self.δ_values = getActivationValues(
-            N, neuronInEachLayers)
+            self.L, neuronInEachLayers)
         return
 
     def forwardPropagation(self, x: np.ndarray) -> np.ndarray:
@@ -63,6 +63,7 @@ class NeuralNetwork:
         Calculates the error terms (δ) of all the neurons in each layers using BackProgagation Algorithm
         '''
         # Backward Progagation on Output layer using the Softmax Activation Function's Derivative
+        y = np.array([y]).T
         self.δ_values[self.L-1][1:] = np.dot(SoftMax().derivative(
             self.z_values[self.L-1][1:]), y - self.a_values[self.L-1][1:])
         # self.δ_values[self.L-1][1:] = y - self.a_values[self.L-1][1:]
@@ -118,4 +119,4 @@ class NeuralNetwork:
         '''
         y_pred = self.predict(x_test)
         y_test = np.argmax(y_test, axis=1)
-        return (y_test[:, 0] == y_pred[:, 0]).sum()/y_test.shape[0]
+        return (y_test == y_pred[:, 0]).sum()/y_test.shape[0]

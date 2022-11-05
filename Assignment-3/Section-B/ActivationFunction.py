@@ -6,8 +6,8 @@ class ActivationFunction:
     def getActivation(type: str):
         function = {
             'sigmoid': Sigmoid(),
-            'TanH': TanH(),
-            'ReLU': ReLU()
+            'tanh': TanH(),
+            'relu': ReLU()
         }
         return function[type]
 

@@ -11,16 +11,16 @@ def getNeuralNetworkWeights(layers, neuronInEachLayers, intializationType):
         layer_weights = getWeights(
             neuronInEachLayers[layer+1], neuronInEachLayers[layer] + 1, intializationType)
         weights.append(layer_weights)
-    return np.array(weights) / np.sqrt(10)
+    return np.array(weights)
 
 
 def getWeights(m, n, type):
     if type == 'zero':
-        return np.zeros(shape=(m, n))
+        return np.zeros(shape=(m, n)) / np.sqrt(m+n)
     if type == 'random':
-        return 2*np.random.rand(m, n) - 1
+        return 0.3*np.random.rand(m, n) / np.sqrt(m+n)
     if type == 'normal':
-        return np.random.randn(m, n)
+        return np.random.randn(m, n) / np.sqrt(m+n)
     return -1
 
 
