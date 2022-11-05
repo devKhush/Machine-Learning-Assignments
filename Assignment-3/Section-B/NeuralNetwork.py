@@ -62,23 +62,15 @@ class NeuralNetwork:
         '''
         Calculates the error terms (δ) of all the neurons in each layers using BackProgagation Algorithm
         '''
-        # self.δ_values[self.L-1][1:] = np.dot(SoftMax().derivative(
-        #     self.z_values[self.L-1][1:]), y - self.a_values[self.L-1][1:])
-        self.δ_values[self.L-1][1:] = y - self.a_values[self.L-1][1:]
+        # Backward Progagation on Output layer using the Softmax Activation Function's Derivative
+        self.δ_values[self.L-1][1:] = np.dot(SoftMax().derivative(
+            self.z_values[self.L-1][1:]), y - self.a_values[self.L-1][1:])
+        # self.δ_values[self.L-1][1:] = y - self.a_values[self.L-1][1:]
 
+        # Backward Progagation on Hidden layer using the actual/input Activation Function
         for l in range(self.L-2, 0, -1):
             self.δ_values[l] = np.dot(self.weights_Θ[l].T, self.δ_values[l+1][1:]) * \
                 self.activation.derivative(self.z_values[l])
-        return
-
-    # TODO: Remove???
-    def resetGradients(self):
-        '''
-        Reset the Weights
-        '''
-        for l in range(self.L-2, -1, -1):
-            self.weights_Θ[l] += self.lr * \
-                np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
         return
 
     def fit(self, x_train: pd.DataFrame, y_train: pd.Series):
@@ -88,15 +80,17 @@ class NeuralNetwork:
         for epoch in range(self.epochs):
             print(epoch, end=' ')
 
-            for i in range(x_train.shape[0]):
-                self.forwardPropagation(x_train.iloc[i])
-                self.backwardPropagation(y_train[i])
-
+            for batch_index in range(0, x_train.shape[0], self.batchSize):
                 Δ_weights = getNeuralNetworkWeights(
                     self.L, self.neuronInEachLayers, 'zero')
-                for l in range(self.L-2, -1, -1):
-                    Δ_weights[l] = Δ_weights[l] + \
-                        np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
+
+                for i in range(batch_index, min(batch_index+self.batchSize, x_train.shape[0]-1)):
+                    self.forwardPropagation(x_train.iloc[i])
+                    self.backwardPropagation(y_train[i])
+
+                    for l in range(self.L-2, -1, -1):
+                        Δ_weights[l] = Δ_weights[l] + \
+                            np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
 
                 self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
         return

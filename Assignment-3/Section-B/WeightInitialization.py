@@ -11,7 +11,7 @@ def getNeuralNetworkWeights(layers, neuronInEachLayers, intializationType):
         layer_weights = getWeights(
             neuronInEachLayers[layer+1], neuronInEachLayers[layer] + 1, intializationType)
         weights.append(layer_weights)
-    return np.array(weights)
+    return np.array(weights) / np.sqrt(10)
 
 
 def getWeights(m, n, type):
