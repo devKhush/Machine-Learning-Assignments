@@ -2,12 +2,15 @@ import numpy as np
 
 
 class ActivationFunction:
+    def __init__(self, type) -> None:
+        self.name = type
+
     @staticmethod
     def getActivation(type: str):
         function = {
-            'sigmoid': Sigmoid(),
-            'tanh': TanH(),
-            'relu': ReLU()
+            'sigmoid': Sigmoid(type),
+            'tanh': TanH(type),
+            'relu': ReLU(type)
         }
         return function[type]
 

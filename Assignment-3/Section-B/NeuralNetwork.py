@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from ActivationFunction import *
 from WeightInitialization import *
 
@@ -55,7 +56,7 @@ class NeuralNetwork:
         L = self.L
         self.z_values[L-1][1:] = np.dot(
             self.weights_Θ[L-2], self.a_values[L-2])
-        self.a_values[L-1][1:] = SoftMax().function(self.z_values[L-1][1:])
+        self.a_values[L-1][1:] = SoftMax('softmax').function(self.z_values[L-1][1:])
         return self.a_values[L-1][1:].copy()
 
     def backwardPropagation(self, y: np.ndarray) -> np.ndarray:
@@ -64,7 +65,7 @@ class NeuralNetwork:
         '''
         # Backward Progagation on Output layer using the Softmax Activation Function's Derivative
         y = np.array([y]).T
-        self.δ_values[self.L-1][1:] = np.dot(SoftMax().derivative(
+        self.δ_values[self.L-1][1:] = np.dot(SoftMax('softmax').derivative(
             self.z_values[self.L-1][1:]), y - self.a_values[self.L-1][1:])
         # self.δ_values[self.L-1][1:] = y - self.a_values[self.L-1][1:]
 
@@ -74,10 +75,12 @@ class NeuralNetwork:
                 self.activation.derivative(self.z_values[l])
         return
 
-    def fit(self, x_train: pd.DataFrame, y_train: pd.Series):
+    def fit(self, x_train: pd.DataFrame, y_train: pd.Series, x_test: pd.DataFrame, y_test: pd.Series):
         '''
         Fit the Model Parameters into the Neural Network
         '''
+        train_loss, validation_loss = [0], [0]
+
         for epoch in range(self.epochs):
             print(epoch, end=' ')
 
@@ -94,6 +97,21 @@ class NeuralNetwork:
                             np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
 
                 self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
+
+            train_loss.append(1 - self.score(x_train, y_train))
+            validation_loss.append(1 - self.score(x_test, y_test))
+
+        plt.figure(figsize=(8, 8))
+        plt.plot(train_loss, 'r-o', label='Training Loss', ms=4)
+        plt.plot(validation_loss, 'b-o', label='Validation Loss', ms=4)
+        plt.xlabel('Iterations', fontsize=13)
+        plt.ylabel('Loss/Error', fontsize=13)
+        plt.xlim((0.75, self.epochs))
+        plt.yticks(np.arange(0, 1, 0.1))
+        plt.title(
+            f"Training loss & Validation loss v/s Iterations for Activation='{self.activation.name}", fontsize=15)
+        plt.legend()
+        plt.show()
         return
 
     def predict(self, x_test: pd.DataFrame) -> np.ndarray:
@@ -111,7 +129,7 @@ class NeuralNetwork:
         y_pred = []
         for i in range(x_test.shape[0]):
             y_pred.append(self.forwardPropagation(x_test.iloc[i]))
-        return np.array(y_pred)
+        return np.array(y_pred).copy()
 
     def score(self, x_test: pd.DataFrame, y_test: pd.Series):
         ''' 
