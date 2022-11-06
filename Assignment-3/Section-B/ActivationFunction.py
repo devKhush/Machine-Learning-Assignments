@@ -32,7 +32,8 @@ class Sigmoid(ActivationFunction):
 
 class TanH(ActivationFunction):
     def function(self, z: np.ndarray) -> np.ndarray:
-        return (np.exp(2*z) - 1) / (np.exp(2*z) + 1)
+        # return (np.exp(2*z) - 1) / (np.exp(2*z) + 1)
+        return np.tanh(z)
 
     def derivative(self, z: np.ndarray) -> np.ndarray:
         y = self.function(z)
@@ -55,3 +56,20 @@ class SoftMax(ActivationFunction):
     def derivative(self, z: np.ndarray) -> np.ndarray:
         y = self.function(z)
         return -np.outer(y, y) + np.diag(y.flatten())
+
+
+class Linear(ActivationFunction):
+    def function(self, z: np.ndarray) -> np.ndarray:
+        return z.copy()
+
+    def derivative(self, z: np.ndarray) -> np.ndarray:
+        return np.ones(shape=z.shape)
+
+class LeakyReLU(ActivationFunction):
+    def function(self, z: np.ndarray) -> np.ndarray:
+        self.a = 0.05
+        return np.vectorize(lambda x: x if x >= 0 else self.a*x)(z)
+
+    def derivative(self, z: np.ndarray) -> np.ndarray:
+        self.a = 0.05
+        return np.vectorize(lambda x: 1 if x >= 0 else self.a)(z)
