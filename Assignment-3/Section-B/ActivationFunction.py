@@ -10,7 +10,9 @@ class ActivationFunction:
         function = {
             'sigmoid': Sigmoid(type),
             'tanh': TanH(type),
-            'relu': ReLU(type)
+            'relu': ReLU(type),
+            'leakyrelu' : LeakyReLU(type),
+            'linear' : Linear(type)
         }
         return function[type]
 
@@ -67,9 +69,9 @@ class Linear(ActivationFunction):
 
 class LeakyReLU(ActivationFunction):
     def function(self, z: np.ndarray) -> np.ndarray:
-        self.a = 0.05
+        self.a = 0.3
         return np.vectorize(lambda x: x if x >= 0 else self.a*x)(z)
 
     def derivative(self, z: np.ndarray) -> np.ndarray:
-        self.a = 0.05
+        self.a = 0.3
         return np.vectorize(lambda x: 1 if x >= 0 else self.a)(z)
