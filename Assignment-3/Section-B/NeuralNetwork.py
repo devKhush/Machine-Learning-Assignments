@@ -98,8 +98,8 @@ class NeuralNetwork:
 
                 self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
 
-            train_loss.append(1 - self.score(x_train, y_train))
-            validation_loss.append(1 - self.score(x_test, y_test))
+            train_loss.append(self.cross_entropy_loss(x_train, y_train))
+            validation_loss.append(self.cross_entropy_loss(x_test, y_test))
 
         plt.figure(figsize=(8, 8))
         plt.plot(train_loss, 'r-o', label='Training Loss', ms=4)
@@ -107,9 +107,9 @@ class NeuralNetwork:
         plt.xlabel('Iterations', fontsize=13)
         plt.ylabel('Loss/Error', fontsize=13)
         plt.xlim((0.75, self.epochs))
-        plt.yticks(np.arange(0, 1, 0.1))
+        # plt.yticks(np.arange(0, 1, 0.1))
         plt.title(
-            f"Training loss & Validation loss v/s Iterations for Activation='{self.activation.name}", fontsize=15)
+            f"Training loss & Validation loss v/s Iterations for Activation='{self.activation.name}'\nPlot of Cross Entropy Loss", fontsize=15)
         plt.legend()
         plt.show()
         return
@@ -133,8 +133,16 @@ class NeuralNetwork:
 
     def score(self, x_test: pd.DataFrame, y_test: pd.Series):
         ''' 
-        Calculate the accuracy score of the trained model in input x_test and labels y_test 
+        Calculate the accuracy score of the trained model in input "x_test" and labels "y_test" 
         '''
         y_pred = self.predict(x_test)
         y_test = np.argmax(y_test, axis=1)
         return (y_test == y_pred[:, 0]).sum()/y_test.shape[0]
+
+    def cross_entropy_loss(self, x_test: pd.DataFrame, y_test: np.ndarray):
+        '''
+        Calculate the Cross Entropy loss on the given Dataset.
+        '''
+        y_pred_proba = self.predict_proba(x_test).reshape(y_test.shape[0], 10)
+        cross_entrpy_loss = y_test * np.log2(y_pred_proba)
+        return -np.sum(cross_entrpy_loss)
