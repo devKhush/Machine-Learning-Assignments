@@ -56,7 +56,8 @@ class NeuralNetwork:
         L = self.L
         self.z_values[L-1][1:] = np.dot(
             self.weights_Θ[L-2], self.a_values[L-2])
-        self.a_values[L-1][1:] = SoftMax('softmax').function(self.z_values[L-1][1:])
+        self.a_values[L -
+                      1][1:] = SoftMax('softmax').function(self.z_values[L-1][1:])
         return self.a_values[L-1][1:].copy()
 
     def backwardPropagation(self, y: np.ndarray) -> np.ndarray:
@@ -145,4 +146,4 @@ class NeuralNetwork:
         '''
         y_pred_proba = self.predict_proba(x_test).reshape(y_test.shape[0], 10)
         cross_entrpy_loss = y_test * np.log2(y_pred_proba)
-        return -np.sum(cross_entrpy_loss)
+        return -np.sum(cross_entrpy_loss) / x_test.shape[0]
