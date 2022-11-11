@@ -1,7 +1,18 @@
 import numpy as np
 
+'''
+Activation functions for Artificial Neural Network
+
+Author: Khushdev Pandit <khushdev20211@iiitd.ac.in, khushdev7838@gmail.com>
+'''
+
 
 class ActivationFunction:
+    '''
+    Return the Activation function
+    Design pattern used: Factory method
+    '''
+
     def __init__(self, type) -> None:
         self.name = type
 
@@ -11,8 +22,8 @@ class ActivationFunction:
             'sigmoid': Sigmoid(type),
             'tanh': TanH(type),
             'relu': ReLU(type),
-            'leakyrelu' : LeakyReLU(type),
-            'linear' : Linear(type)
+            'leakyrelu': LeakyReLU(type),
+            'linear': Linear(type)
         }
         return function[type]
 
@@ -24,6 +35,10 @@ class ActivationFunction:
 
 
 class Sigmoid(ActivationFunction):
+    '''
+    Sigmoid Activation function
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
         return 1 / (1 + np.exp(-z))
 
@@ -33,8 +48,11 @@ class Sigmoid(ActivationFunction):
 
 
 class TanH(ActivationFunction):
+    '''
+    TanH Activation function
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
-        # return (np.exp(2*z) - 1) / (np.exp(2*z) + 1)
         return np.tanh(z)
 
     def derivative(self, z: np.ndarray) -> np.ndarray:
@@ -43,6 +61,10 @@ class TanH(ActivationFunction):
 
 
 class ReLU(ActivationFunction):
+    '''
+    ReLU Activation function
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
         return np.maximum(0, z)
 
@@ -51,6 +73,10 @@ class ReLU(ActivationFunction):
 
 
 class SoftMax(ActivationFunction):
+    '''
+    SoftMax Activation function (for last layer)
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
         exponents = np.exp(z)
         return exponents / np.sum(exponents)
@@ -61,13 +87,25 @@ class SoftMax(ActivationFunction):
 
 
 class Linear(ActivationFunction):
+    '''
+    Linear Activation function
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
         return z.copy()
 
     def derivative(self, z: np.ndarray) -> np.ndarray:
         return np.ones(shape=z.shape)
 
+
 class LeakyReLU(ActivationFunction):
+    '''
+    Leaky ReLU Activation function
+    Hyperparameter value for x<0 is taken as 0.3 beacuse the Leaky ReLU is a variant of ReLU.
+    It must has the propery of ReLU, so the Hyperparameter value should be low.
+    Annd 0.3 is taken based on Testing.
+    '''
+
     def function(self, z: np.ndarray) -> np.ndarray:
         self.a = 0.3
         return np.vectorize(lambda x: x if x >= 0 else self.a*x)(z)

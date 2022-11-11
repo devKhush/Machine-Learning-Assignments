@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 from ActivationFunction import *
 from WeightInitialization import *
 
+'''
+Artifical Neural Network (or Multilayer Perceptron)
+
+Author: Khushdev Pandit <khushdev20211@iiitd.ac.in, khushdev7838@gmail.com>
+'''
+
 
 class NeuralNetwork:
     '''
@@ -20,7 +26,7 @@ class NeuralNetwork:
         >>> weightInitType = How to initialize weights.
             Must be ['zero', 'random', 'normal]
         >>> epochs = Epochs to be used in Gradient Descent
-        >>> batchSize = ???
+        >>> batchSize = Batch size to be used in Mini-Batch Gradient Descent
         '''
         self.L = N + 2
         self.neuronInEachLayers = neuronInEachLayers
@@ -80,15 +86,21 @@ class NeuralNetwork:
         '''
         Fit the Model Parameters into the Neural Network
         '''
+        # Array to store Training and Validation cross-entropy loss 
         train_loss, validation_loss = [0], [0]
 
+        # Run over all the epochs
         for epoch in range(self.epochs):
             print(epoch, end=' ')
 
+            # In each epoch, train the Neural network model Batch wise
             for batch_index in range(0, x_train.shape[0], self.batchSize):
+                # Change in wieghts captured on the whole training Batch
                 Δ_weights = getNeuralNetworkWeights(
                     self.L, self.neuronInEachLayers, 'zero')
 
+                # Propagate each Training example in the Training Batch forward and backward
+                # Also, calculate the error terms (δ) for all the layers 
                 for i in range(batch_index, min(batch_index+self.batchSize, x_train.shape[0]-1)):
                     self.forwardPropagation(x_train.iloc[i])
                     self.backwardPropagation(y_train[i])
@@ -97,8 +109,10 @@ class NeuralNetwork:
                         Δ_weights[l] = Δ_weights[l] + \
                             np.dot(self.δ_values[l+1][1:], self.a_values[l].T)
 
+                # Update the weights Batch wise
                 self.weights_Θ = self.weights_Θ + self.lr * Δ_weights
 
+            # Calculate the Log-loss (or Cross-Entropy loss) on Training and validation 
             train_loss.append(self.cross_entropy_loss(x_train, y_train))
             validation_loss.append(self.cross_entropy_loss(x_test, y_test))
 
@@ -143,6 +157,7 @@ class NeuralNetwork:
     def cross_entropy_loss(self, x_test: pd.DataFrame, y_test: np.ndarray):
         '''
         Calculate the Cross Entropy loss on the given Dataset.
+        This is same as sklearn's log_loss
         '''
         y_pred_proba = self.predict_proba(x_test).reshape(y_test.shape[0], 10)
         cross_entrpy_loss = y_test * np.log2(y_pred_proba)
