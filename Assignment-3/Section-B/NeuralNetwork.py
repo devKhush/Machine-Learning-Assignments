@@ -122,7 +122,6 @@ class NeuralNetwork:
         plt.xlabel('Iterations', fontsize=13)
         plt.ylabel('Loss/Error', fontsize=13)
         plt.xlim((0.75, self.epochs))
-        # plt.yticks(np.arange(0, 1, 0.1))
         plt.title(
             f"Training loss & Validation loss v/s Iterations for Activation='{self.activation.name}'\nPlot of Cross Entropy Loss", fontsize=15)
         plt.legend()
